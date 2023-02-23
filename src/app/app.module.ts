@@ -1,7 +1,9 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { HotToastModule } from '@ngneat/hot-toast';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -13,6 +15,10 @@ import { CartService } from './views/pages/services/cart.service';
 import { WishlistService } from './views/pages/services/wishlist.service';
 import { WishlistComponent } from './views/shared/wishlist/wishlist.component';
 import { CartComponent } from './views/shared/cart/cart.component';
+import { JwtInterceptor } from './views/pages/auth/services/jwt.interceptor';
+import { AuthService } from './views/pages/auth/services/auth.service';
+import { LocalstorageService } from './views/pages/auth/services/localstorage.service';
+import { BrowserAnimationsModule, NoopAnimationsModule } from '@angular/platform-browser/animations';
 
 @NgModule({
   declarations: [
@@ -25,12 +31,18 @@ import { CartComponent } from './views/shared/cart/cart.component';
     CartComponent
   ],
   imports: [
+    BrowserAnimationsModule,
+    NoopAnimationsModule,
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
-    FormsModule
+    FormsModule,
+    ReactiveFormsModule,
+    HotToastModule.forRoot()
   ],
-  providers: [],
+  providers: [
+    { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule {
@@ -38,9 +50,14 @@ export class AppModule {
   (
     private _cartService: CartService,
     private _wishlistService: WishlistService,
+    private _authService: AuthService,
+    private _localstorageService: LocalstorageService
   )
   {
     _wishlistService.initWishlistLocalStorage();
     _cartService.initCartLocalStorage();
+    if(_localstorageService.getToken()) {
+      _authService.startRefreshTokenTimer();
+    }
   }
 }

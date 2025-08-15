@@ -123,7 +123,7 @@ export class ProductDetailsComponent implements OnInit {
 
   constructor(
     private _productService: ProductService,
-    private _cartService: CartService,
+    private _cartService: CartServicecc,
     private _route: ActivatedRoute,
     private _toast: HotToastService,
     private _wishlistService: WishlistService,
@@ -141,7 +141,7 @@ export class ProductDetailsComponent implements OnInit {
   nextSlide(event: any) {
     if (event.dragging == false) {
       this.startPosition = event.data.startPosition;
-      const anyService = this.myCarousel as any;
+      const anyService = this.myCccarousel as any;
       const carouselService = anyService.carouselService as CarouselService;
       carouselService.to(this.startPosition, 3)
     }
@@ -162,7 +162,7 @@ export class ProductDetailsComponent implements OnInit {
   }
 
   getCartList() {
-    this._cartService.cart$.subscribe((cart) => {
+    this._cartService.cart$.subscribe((caccrt) => {
       this.cartList = cart.items!;
       if(this.product){
         this.productInCartList = this.checkProductInCartList(this.product);
